@@ -1,0 +1,118 @@
+{% extends "baseMeta.html" %}
+
+{% block head %}
+<script type="module" lang="javascript">
+  const getWeb3 = () =>
+    new Promise((resolve, reject) => {
+      // Wait for loading completion to avoid race conditions with web3 injection timing.
+      window.addEventListener("load", async () => {
+        // Modern dapp browsers...
+        if (window.ethereum) {
+          const web3 = new Web3(window.ethereum);
+          try {
+            // Request account access if needed
+            await window.ethereum.enable();
+            // Acccounts now exposed
+            resolve(web3);
+          } catch (error) {
+            reject(error);
+          }
+        }
+        // Legacy dapp browsers...
+        else if (window.web3) {
+          // Use Mist/MetaMask's provider.
+          const web3 = window.web3;
+          console.log("Injected web3 detected.");
+          resolve(web3);
+        }
+        // Fallback to localhost; use dev console port by default...
+        else {
+          const provider = new Web3.providers.HttpProvider(
+            "http://127.0.0.1:8545"
+          );
+          const web3 = new Web3(provider);
+          console.log("No web3 instance injected, using Local web3.");
+          resolve(web3);
+        }
+      });
+    });
+
+  $(document).ready(function() {
+    // Get network provider and web3 instance.
+    var web3 = getWeb3();
+
+    var contractAddress = "{{contractAddress}}";
+    var contractABI = JSON.parse('{{contractABI | safe}}');
+
+    var contractInstance = new web3.eth.Contract(
+      contractABI,
+      contractAddress,
+    );
+
+    // Update every second
+    var x = setInterval(function() {
+      // get phase
+      var phase = contractInstance.methods.phase().call();
+      if (phase == 0) {
+        curPhase = "Registration";
+      }
+      else if (phase == 1) {
+        curPhase = "Trading";
+      }
+      else if (phase == 2) {
+        curPhase = "Reveal";
+      }
+      else if (phase == 3) {
+        curPhase = "Calculation";
+      }
+      else if (phase == 4) {
+        curPhase = "Results";
+      }
+      // Display the result in the element with id="demo"
+      document.getElementById("phase").innerHTML = "Current Phase: " + curPhase;
+    }, 1000);
+
+    $("btn").click(function(){
+        const type = $("#type").val();
+        const price  = $("#price").val();
+        const volume  = $("#volume").val();
+        const mes  = $("#mes").val();
+
+        contractInstance.addOrganisation(addr, name, loc, email, {from:web3.eth.accounts[0]}, function(error, result){
+          if (error) {
+            alert("Error!");
+            reject(error);
+          }
+        });
+    });
+  });
+</script>
+
+<title>Client Page</title>
+{% endblock %}
+
+{% block content %}
+<h1>Client Page</h1>
+<p class="lead" id="phase">Current Phase: Registration</p>
+<p class="lead">Please use the form below to enter your order.</p>
+<form>
+  <label class="form-label">Order Type</label>
+  <select class="form-select" aria-label="Default select example" id="type">
+    <option value="1">Buy</option>
+    <option value="2">Sell</option>
+  </select>
+  <div class="mb-3">
+    <label for="price" class="form-label">Price</label>
+    <input type="number" min="1" class="form-control" id="price">
+  </div>
+  <div class="mb-3">
+    <label for="volume" class="form-label">Volume</label>
+    <input type="number" min="1" class="form-control" id="volume">
+  </div>
+  <div class="mb-3">
+    <label for="mes" class="form-label">Minimum Execution Size</label>
+    <input type="number" min="1" class="form-control" id="mes">
+  </div>
+  <button type="submit" class="btn btn-primary btn-lg" id="btn">Submit</button>
+</form>
+{% endblock %}

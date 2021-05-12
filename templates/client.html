@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block head %}
+<title>Client Page</title>
+{% endblock %}
+
+{% block content %}
+<h1>Client Page</h1>
+<p class="lead">Please use the form below to enter your order.</p>
+<form action="#" method="post">
+  <label class="form-label">Order Type</label>
+  <select class="form-select" aria-label="Default select example" name="type">
+    <option value="b">Buy</option>
+    <option value="s">Sell</option>
+  </select>
+  <div class="mb-3">
+    <label for="asset" class="form-label">Asset</label>
+    <input type="text" class="form-control" name="asset">
+  </div>
+  <div class="mb-3">
+    <label for="price" class="form-label">Price</label>
+    <input type="number" min="1" class="form-control" name="price">
+  </div>
+  <div class="mb-3">
+    <label for="volume" class="form-label">Volume</label>
+    <input type="number" min="1" class="form-control" name="volume">
+  </div>
+  <div class="mb-3">
+    <label for="mes" class="form-label">Minimum Execution Size</label>
+    <input type="number" min="1" class="form-control" name="mes">
+  </div>
+  <button type="submit" class="btn btn-primary btn-lg">Submit</button>
+</form>
+{% endblock %}

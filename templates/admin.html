@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block head %}
+<title>Client Page</title>
+{% endblock %}
+
+{% block content %}
+<h1>Admin Page</h1>
+<p class="lead">Please use the form below to register/delete clients.</p>
+<form action="#" method="post">
+  <label class="form-label">Action</label>
+  <select class="form-select" aria-label="Default select example" name="action">
+    <option value="r">Register</option>
+    <option value="d">Delete</option>
+  </select>
+  <div class="mb-3">
+    <label for="addr" class="form-label">Client Address</label>
+    <input type="text" class="form-control" name="addr">
+  </div>
+  <button type="submit" class="btn btn-primary btn-lg">Submit</button>
+</form>
+{% endblock %}
