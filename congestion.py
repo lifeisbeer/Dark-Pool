@@ -47,4 +47,4 @@ while True:
     })
 
     # wait some time before sendig the next transaction
-    #time.sleep(transaction_delay)
+    time.sleep(transaction_delay)
